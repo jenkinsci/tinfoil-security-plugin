@@ -1,0 +1,92 @@
+package com.tinfoilsecurity.plugins.tinfoilscan;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.StaplerRequest;
+
+import hudson.Extension;
+import hudson.Launcher;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.BuildListener;
+import hudson.model.Result;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
+import net.sf.json.JSONObject;
+
+public class TinfoilScanRecorder extends Recorder {
+
+  private String siteID;
+
+  // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
+  @DataBoundConstructor
+  public TinfoilScanRecorder(String siteID) {
+    this.siteID = siteID;
+  }
+
+  public String getSiteID() {
+    return siteID;
+  }
+
+  @Override
+  public BuildStepMonitor getRequiredMonitorService() {
+    return BuildStepMonitor.STEP;
+  }
+
+  @Override
+  public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
+    listener.getLogger().println("Site ID:    " + siteID);
+    listener.getLogger().println("Access Key: " + getDescriptor().getAPIAccessKey());
+    listener.getLogger().println("Secret Key: " + getDescriptor().getAPISecretKey());
+
+    build.setResult(Result.SUCCESS);
+    return true;
+  }
+
+  // Overridden for better type safety.
+  @Override
+  public DescriptorImpl getDescriptor() {
+    return (DescriptorImpl) super.getDescriptor();
+  }
+
+  @Extension
+  public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+
+    private String apiAccessKey;
+    private String apiSecretKey;
+
+    public DescriptorImpl() {
+      load();
+    }
+
+    @Override
+    public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+      // Applicable for all job types.
+      return true;
+    }
+
+    @Override
+    public String getDisplayName() {
+      return "Tinfoil Security";
+    }
+
+    // This gets called when you save global settings. See global.jelly.
+    @Override
+    public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+      apiAccessKey = json.getString("accessKey");
+      apiSecretKey = json.getString("secretKey");
+      save();
+
+      return super.configure(req, json);
+    }
+
+    public String getAPIAccessKey() {
+      return apiAccessKey;
+    }
+
+    public String getAPISecretKey() {
+      return apiSecretKey;
+    }
+  }
+}

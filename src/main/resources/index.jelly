@@ -3,5 +3,5 @@
   This view is used to render the installed plugins page.
 -->
 <div>
-  This plugin is a sample to explain how to write a Jenkins plugin.
+  This plugin allows you to run web security tests from the cloud using <a href="https://www.tinfoilsecurity.com">Tinfoil Security</a>. 
 </div>
