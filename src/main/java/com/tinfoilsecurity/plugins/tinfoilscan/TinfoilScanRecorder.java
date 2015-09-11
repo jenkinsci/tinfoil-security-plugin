@@ -3,6 +3,9 @@ package com.tinfoilsecurity.plugins.tinfoilscan;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+import com.tinfoilsecurity.api.Client;
+import com.tinfoilsecurity.api.Client.APIException;
+
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -36,9 +39,17 @@ public class TinfoilScanRecorder extends Recorder {
 
   @Override
   public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
-    listener.getLogger().println("Site ID:    " + siteID);
-    listener.getLogger().println("Access Key: " + getDescriptor().getAPIAccessKey());
-    listener.getLogger().println("Secret Key: " + getDescriptor().getAPISecretKey());
+    Client tinfoilAPI = new Client(getDescriptor().getAPIAccessKey(), getDescriptor().getAPISecretKey());
+
+    try {
+      tinfoilAPI.startScan(siteID);
+
+      listener.getLogger().println(
+          "Tinfoil Security scan started! Log in to https://www.tinfoilsecurity.com/sites to view its progress.");
+    }
+    catch (APIException e) {
+      e.printStackTrace();
+    }
 
     build.setResult(Result.SUCCESS);
     return true;
