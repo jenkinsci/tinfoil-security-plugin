@@ -39,7 +39,7 @@ public class TinfoilScanRecorder extends Recorder {
 
   @Override
   public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
-    Client tinfoilAPI = new Client(getDescriptor().getAPIAccessKey(), getDescriptor().getAPISecretKey());
+    Client tinfoilAPI = getDescriptor().buildClient();
 
     try {
       tinfoilAPI.startScan(siteID);
@@ -48,7 +48,8 @@ public class TinfoilScanRecorder extends Recorder {
           "Tinfoil Security scan started! Log in to https://www.tinfoilsecurity.com/sites to view its progress.");
     }
     catch (APIException e) {
-      e.printStackTrace();
+      listener.getLogger().println(
+          "Your Tinfoil Security scan could not be started. " + e.getMessage());
     }
 
     build.setResult(Result.SUCCESS);
@@ -58,11 +59,13 @@ public class TinfoilScanRecorder extends Recorder {
   // Overridden for better type safety.
   @Override
   public DescriptorImpl getDescriptor() {
-    return (DescriptorImpl) super.getDescriptor();
+    return DESCRIPTOR;
   }
 
   @Extension
-  public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+  public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
+  public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
     private String apiAccessKey;
     private String apiSecretKey;
@@ -98,6 +101,10 @@ public class TinfoilScanRecorder extends Recorder {
 
     public String getAPISecretKey() {
       return apiSecretKey;
+    }
+    
+    public Client buildClient() {
+      return new Client(getAPIAccessKey(), getAPISecretKey());
     }
   }
 }

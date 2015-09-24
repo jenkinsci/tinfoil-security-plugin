@@ -15,7 +15,18 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.tinfoilsecurity.api.Report.Classification;
 
 public class Client {
-  public class APIException extends Exception {};
+  public class APIException extends Exception {
+
+    private static final String DEFAULT_MESSAGE = "An unexpected error has occured. Perhaps the Tinfoil API is down.";
+
+    public APIException() {
+      super(DEFAULT_MESSAGE);
+    }
+
+    public APIException(String message) {
+      super(message);
+    }
+  };
 
   private static final String API_HOST = "https://www.tinfoilsecurity.com";
 
@@ -36,10 +47,17 @@ public class Client {
       throw new APIException();
     }
 
-    if (200 == res.getStatus()) {
+    switch (res.getStatus()) {
+    case 200:
       return scanFromJSON(res.getBody().getObject());
-    }
-    else {
+    case 404:
+      throw new APIException("A site could not be found with the given Site ID: " + siteID + ".");
+    case 409:
+      throw new APIException("A scan is already running on this site.");
+    case 412:
+      throw new APIException(
+          "Your site has possible configuration errors. Please log in to Tinfoil Security to review them.");
+    default:
       throw new APIException();
     }
   }
@@ -62,7 +80,8 @@ public class Client {
       throw new APIException();
     }
 
-    if (200 == res.getStatus()) {
+    switch (res.getStatus()) {
+    case 200:
       JSONArray scans = res.getBody().getObject().getJSONArray("scans");
       if (scans.length() > 0) {
         return scanID.equals(scans.getJSONObject(0).getString("id"));
@@ -70,8 +89,10 @@ public class Client {
       else {
         return false;
       }
-    }
-    else {
+    case 404:
+      throw new APIException("A site could not be found with the given Site ID: " + siteID + ".");
+    
+    default:
       throw new APIException();
     }
   }
@@ -93,12 +114,14 @@ public class Client {
     catch (UnirestException e) {
       throw new APIException();
     }
-
-    if (200 == res.getStatus()) {
+    
+    switch (res.getStatus()) {
+    case 200:
       return reportFromJSON(res.getBody().getObject());
-    }
-    else {
-      return null;
+    case 404:
+      throw new APIException("This report could not be found.");
+    default:
+      throw new APIException();
     }
   }
 
