@@ -15,7 +15,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.tinfoilsecurity.api.Report.Classification;
 
 public class Client {
-  public class APIException extends Exception {
+  public static class APIException extends Exception {
 
     private static final String DEFAULT_MESSAGE = "An unexpected error has occured. Perhaps the Tinfoil API is down.";
 
@@ -48,8 +48,10 @@ public class Client {
     }
 
     switch (res.getStatus()) {
-    case 200:
+    case 201:
       return scanFromJSON(res.getBody().getObject());
+    case 401:
+      throw new APIException("Your API credentials are invalid.");
     case 404:
       throw new APIException("A site could not be found with the given Site ID: " + siteID + ".");
     case 409:
@@ -134,7 +136,7 @@ public class Client {
   }
 
   private static Scan scanFromJSON(JSONObject object) {
-    String scanID = object.getString("id");
+    String scanID = object.getJSONObject("scan").getString("id");
     return new Scan(scanID);
   }
 
