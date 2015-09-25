@@ -12,7 +12,7 @@
   </parent>
   <groupId>com.tinfoilsecurity.plugins</groupId>
   <artifactId>tinfoil-scan</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>hpi</packaging>
 
   <name>Tinfoil Security Plugin</name>
@@ -40,28 +40,6 @@
     <url>http://github.com/jenkinsci/${project.artifactId}-plugin</url>
   </scm>
    -->
-  <repositories>
-    <repository>
-      <id>repo.jenkins-ci.org</id>
-      <url>http://repo.jenkins-ci.org/public/</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>repo.jenkins-ci.org</id>
-      <url>http://repo.jenkins-ci.org/public/</url>
-    </pluginRepository>
-  </pluginRepositories>
-  <!-- If you want to depend on other plugins:
-  <dependencies>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>credentials</artifactId>
-      <version>1.9.4</version>
-    </dependency>
-  </dependencies>
-  -->
-
   <dependencies>
   	<dependency>
   		<groupId>com.mashape.unirest</groupId>
