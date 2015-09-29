@@ -33,13 +33,11 @@
     </developer>
   </developers>
   -->
-  <!-- Assuming you want to host on @jenkinsci:
   <scm>
-    <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <url>http://github.com/jenkinsci/${project.artifactId}-plugin</url>
+    <connection>scm:git:git://github.com/jenkinsci/tinfoil-security-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/tinfoil-security-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/tinfoil-security-plugin</url>
   </scm>
-   -->
   <dependencies>
   	<dependency>
   		<groupId>com.mashape.unirest</groupId>
