@@ -3,27 +3,20 @@ This plugin allows you to run web security tests from the cloud using Tinfoil Se
 
 ## Development
 
-Install the latest and greatest JDK from Oracle.
+1. Install the latest and greatest JDK from Oracle. http://www.oracle.com/technetwork/java/javase/downloads/index.html
 
-http://www.oracle.com/technetwork/java/javase/downloads/index.html
+2. Install maven.  With homebrew: `$ brew install maven`
 
-Install `maven`.  I used `brew` to install it.
+3. Configure maven's `settings.xml` (likely in ~/.m2/settings.xml). Instructions are here: https://wiki.jenkins-ci.org/display/JENKINS/Plugin+tutorial#Plugintutorial-SettingUpEnvironment
 
-```$ brew install maven```
+4. Make sure the project builds without Eclipse first. From the root of this repo, run the following: `mvn package`
 
-Make sure the project builds without Eclipse first. From the root of this repo, run the following.
+5. Download Eclipse for Java. With homebrew: `$ brew cask install eclipse-java`
 
-```mvn package```
+6. Open Eclipse and make a workspace. Then run the following command (which is really two commands in one) from the repo root to a) sync the maven dependencies with the eclipse classpath and b) make this project compatible with your Eclipse. Be sure to replace `/PATH/TO/YOUR/WORKSPACE`.
+```$ mvn -DdownloadSources=true -DdownloadJavadocs=true -DoutputDirectory=target/eclipse-classes -Declipse.workspace=/PATH/TO/YOUR/WORKSPACE eclipse:eclipse eclipse:add-maven-repo```
 
-Download Eclipse for Java. I used `brew-cask` for this.
-
-```$ brew cask install eclipse-java```
-
-Open Eclipse and make a workspace. Then run the following command (which is really two commands in one) from the repo root to a) sync the maven dependencies with the eclipse classpath and b) make this project compatible with your Eclipse.
-
-```mvn -DdownloadSources=true -DdownloadJavadocs=true -DoutputDirectory=target/eclipse-classes -Declipse.workspace=/path/to/your/workspace eclipse:eclipse eclipse:add-maven-repo```
-
-Import this project into Eclipse using File > Import... > General > Existing Projects Into Workspace
+7. Import this project into Eclipse using File > Import... > General > Existing Projects Into Workspace
 
 Make sure you have your M2_REPO classpath variable set properly. Mine wasn't set at all.
 
@@ -36,11 +29,11 @@ Eclipse will prompt you to rebuild the project. Make sure that this returns no b
 
 ## Testing
 
-```mvn hpi:run```
+```$ mvn hpi:run```
 
 This will run Jenkins with your Tinfoil plugin as an available plugin. Now you can install the plugin and use it. Jenkins by default runs on port 8080. If you need a different port, use the `jetty.port` option.
 
-```mvn hpi:run -Djetty.port=8090```
+```$ mvn hpi:run -Djetty.port=8090```
 
 ## Adding a library
 
@@ -48,5 +41,5 @@ Dependency management is handled by Maven. The file that stores dependencies is 
 
 After adding a dependency to the `pom.xml`, you need to do two things to get Eclipse to understand that it exists.
 
-1. In the project root directory, run `mvn eclipse:eclipse`
+1. In the project root directory, run `$ mvn eclipse:eclipse`
 2. In Eclipse, hit F5 to refresh.
