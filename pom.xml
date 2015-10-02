@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.tinfoilsecurity.plugins</groupId>
   <artifactId>tinfoil-scan</artifactId>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <name>Tinfoil Security Plugin</name>
