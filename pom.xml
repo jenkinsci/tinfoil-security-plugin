@@ -24,15 +24,13 @@
       <url>http://opensource.org/licenses/MIT</url>
     </license>
   </licenses>
-  <!-- If you want this to appear on the wiki page:
   <developers>
     <developer>
-      <id>bhacker</id>
-      <name>Bob Q. Hacker</name>
-      <email>bhacker@nowhere.net</email>
+      <id>angelman</id>
+      <name>Angel Irizarry</name>
+      <email>angel@tinfoilsecurity.com</email>
     </developer>
   </developers>
-  -->
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/tinfoil-security-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/tinfoil-security-plugin.git</developerConnection>
