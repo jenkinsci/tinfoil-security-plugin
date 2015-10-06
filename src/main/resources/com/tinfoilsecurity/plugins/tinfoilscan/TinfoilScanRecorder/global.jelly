@@ -7,5 +7,10 @@
     <f:entry title="API Secret Key" field="secretKey">
       <f:textbox default="${descriptor.getAPISecretKey()}" />
     </f:entry>
+    <f:optionalBlock field="applianceEnabled" inline="true" checked="${instance.applianceEnabled}" title="Enable Appliance Configuration">
+      <f:entry title="Appliance URL" field="apiHost">
+        <f:textbox default="${descriptor.getAPIHost()}" />
+      </f:entry>
+    </f:optionalBlock>
   </f:section>
 </j:jelly>

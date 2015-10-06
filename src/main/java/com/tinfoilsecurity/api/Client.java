@@ -28,20 +28,24 @@ public class Client {
     }
   };
 
-  private static final String API_HOST = "https://www.tinfoilsecurity.com";
+  private String apiHost = "https://www.tinfoilsecurity.com";
 
-  private static final String ENDPOINT_START_SCAN = API_HOST + "/api/v1/sites/{site_id}/scans";
-  private static final String ENDPOINT_GET_SCANS  = API_HOST + "/api/v1/sites/{site_id}/scans";
-  private static final String ENDPOINT_GET_REPORT = API_HOST + "/api/v1/sites/{site_id}/scans/{scan_id}/report";
+  private static final String ENDPOINT_START_SCAN = "/api/v1/sites/{site_id}/scans";
+  private static final String ENDPOINT_GET_SCANS  = "/api/v1/sites/{site_id}/scans";
+  private static final String ENDPOINT_GET_REPORT = "/api/v1/sites/{site_id}/scans/{scan_id}/report";
 
   public Client(String accessKey, String secretKey) {
     Unirest.setDefaultHeader("Authorization", "Token token=" + secretKey + ", access_key=" + accessKey);
   }
 
+  public void setAPIHost(String host) {
+    this.apiHost = host;
+  }
+
   public Scan startScan(String siteID) throws APIException {
     HttpResponse<JsonNode> res = null;
     try {
-      res = Unirest.post(ENDPOINT_START_SCAN).routeParam("site_id", siteID).asJson();
+      res = Unirest.post(apiHost + ENDPOINT_START_SCAN).routeParam("site_id", siteID).asJson();
     }
     catch (UnirestException e) {
       throw new APIException();
@@ -76,7 +80,7 @@ public class Client {
     HttpResponse<JsonNode> res;
 
     try {
-      res = Unirest.get(ENDPOINT_GET_SCANS).routeParam("site_id", siteID).queryString(params).asJson();
+      res = Unirest.get(apiHost + ENDPOINT_GET_SCANS).routeParam("site_id", siteID).queryString(params).asJson();
     }
     catch (UnirestException e) {
       throw new APIException();
@@ -93,7 +97,7 @@ public class Client {
       }
     case 404:
       throw new APIException("A site could not be found with the given Site ID: " + siteID + ".");
-    
+
     default:
       throw new APIException();
     }
@@ -110,13 +114,13 @@ public class Client {
     HttpResponse<JsonNode> res;
 
     try {
-      res = Unirest.get(ENDPOINT_GET_REPORT).routeParam("site_id", siteID).routeParam("scan_id", scanID)
+      res = Unirest.get(apiHost + ENDPOINT_GET_REPORT).routeParam("site_id", siteID).routeParam("scan_id", scanID)
           .queryString(params).asJson();
     }
     catch (UnirestException e) {
       throw new APIException();
     }
-    
+
     switch (res.getStatus()) {
     case 200:
       return reportFromJSON(res.getBody().getObject());

@@ -45,11 +45,10 @@ public class TinfoilScanRecorder extends Recorder {
       tinfoilAPI.startScan(siteID);
 
       listener.getLogger().println(
-          "Tinfoil Security scan started! Log in to https://www.tinfoilsecurity.com/sites to view its progress.");
+          "Tinfoil Security scan started! Log in to " + getDescriptor().getAPIHost() + "/sites to view its progress.");
     }
     catch (APIException e) {
-      listener.getLogger().println(
-          "Your Tinfoil Security scan could not be started. " + e.getMessage());
+      listener.getLogger().println("Your Tinfoil Security scan could not be started. " + e.getMessage());
     }
 
     build.setResult(Result.SUCCESS);
@@ -67,6 +66,7 @@ public class TinfoilScanRecorder extends Recorder {
 
   public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
+    private String apiHost;
     private String apiAccessKey;
     private String apiSecretKey;
 
@@ -88,11 +88,25 @@ public class TinfoilScanRecorder extends Recorder {
     // This gets called when you save global settings. See global.jelly.
     @Override
     public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+      if (json.getBoolean("applianceEnabled") && !json.getString("apiHost").isEmpty()) {
+        apiHost = json.getString("apiHost");
+      }
+      else {
+        apiHost = null;
+      }      
       apiAccessKey = json.getString("accessKey");
       apiSecretKey = json.getString("secretKey");
       save();
 
       return super.configure(req, json);
+    }
+    
+    public String getAPIHost() {
+      return apiHost;
+    }
+    
+    public boolean isApplianceEnabled() {
+      return apiHost != null && !apiHost.isEmpty();
     }
 
     public String getAPIAccessKey() {
@@ -102,9 +116,13 @@ public class TinfoilScanRecorder extends Recorder {
     public String getAPISecretKey() {
       return apiSecretKey;
     }
-    
+
     public Client buildClient() {
-      return new Client(getAPIAccessKey(), getAPISecretKey());
+      Client client = new Client(apiAccessKey, apiSecretKey);
+      if (isApplianceEnabled()) {
+        client.setAPIHost(apiHost);
+      }
+      return client;
     }
   }
 }
