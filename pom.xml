@@ -9,7 +9,7 @@
   </parent>
   <groupId>com.tinfoilsecurity.plugins</groupId>
   <artifactId>tinfoil-scan</artifactId>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <name>Tinfoil Security Plugin</name>
@@ -32,7 +32,7 @@
     <connection>scm:git:git://github.com/jenkinsci/tinfoil-security-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/tinfoil-security-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/tinfoil-security-plugin</url>
-    <tag>tinfoil-scan-1.1</tag>
+    <tag>HEAD</tag>
   </scm>
   <dependencies>
     <dependency>
