@@ -1,5 +1,5 @@
-# jenkins-plugin
-This plugin allows you to run web security tests from the cloud using Tinfoil Security.
+# Tinfoil Security Jenkins Plugin
+This Jenkins plugin allows you to run web security tests from the cloud using Tinfoil Security.
 
 ## Development
 
