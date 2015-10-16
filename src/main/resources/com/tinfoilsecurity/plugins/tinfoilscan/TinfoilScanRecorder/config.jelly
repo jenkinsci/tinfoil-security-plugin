@@ -3,7 +3,13 @@
   <!--
     This jelly script is used for per-project configuration.
   -->
+  <f:entry title="API Access Key" field="accessKey">
+    <f:textbox default="${instance.getAPIAccessKey()}" placeholder="${descriptor.getAPIAccessKey()}" />
+  </f:entry>
+  <f:entry title="API Secret Key" field="secretKey">
+    <f:textbox default="${instance.getAPISecretKey()}" placeholder="${descriptor.getAPISecretKey()}"/>
+  </f:entry>
   <f:entry title="Site ID" field="siteID">
-    <f:textbox default="${descriptor.getSiteID()}"/>
+    <f:textbox default="${instance.getSiteID()}"/>
   </f:entry>
 </j:jelly>

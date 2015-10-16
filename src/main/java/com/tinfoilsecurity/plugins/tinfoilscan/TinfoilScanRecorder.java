@@ -19,13 +19,36 @@ import hudson.tasks.Recorder;
 import net.sf.json.JSONObject;
 
 public class TinfoilScanRecorder extends Recorder {
-
+  
+  private String apiAccessKey;
+  private String apiSecretKey;
   private String siteID;
 
   // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
   @DataBoundConstructor
-  public TinfoilScanRecorder(String siteID) {
+  public TinfoilScanRecorder(String accessKey, String secretKey, String siteID) {
+    if (accessKey.isEmpty()) {
+      this.apiAccessKey = null;
+    }
+    else {
+      this.apiAccessKey = accessKey;
+    }
+    if (secretKey.isEmpty()) {
+      this.apiSecretKey = null;
+    }
+    else {
+      this.apiSecretKey = secretKey;
+    }
+
     this.siteID = siteID;
+  }
+  
+  public String getAPIAccessKey() {
+    return apiAccessKey != null ? apiAccessKey : getDescriptor().getAPIAccessKey();
+  }
+  
+  public String getAPISecretKey() {
+    return apiSecretKey != null ? apiSecretKey : getDescriptor().getAPISecretKey();
   }
 
   public String getSiteID() {
@@ -39,7 +62,7 @@ public class TinfoilScanRecorder extends Recorder {
 
   @Override
   public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
-    Client tinfoilAPI = getDescriptor().buildClient();
+    Client tinfoilAPI = getDescriptor().buildClient(getAPIAccessKey(), getAPISecretKey());
 
     try {
       tinfoilAPI.startScan(siteID);
@@ -117,7 +140,7 @@ public class TinfoilScanRecorder extends Recorder {
       return apiSecretKey;
     }
 
-    public Client buildClient() {
+    public Client buildClient(String apiAccessKey, String apiSecretKey) {
       Client client = new Client(apiAccessKey, apiSecretKey);
       if (isApplianceEnabled()) {
         client.setAPIHost(apiHost);
