@@ -48,7 +48,7 @@ public class Client {
       res = Unirest.post(apiHost + ENDPOINT_START_SCAN).routeParam("site_id", siteID).asJson();
     }
     catch (UnirestException e) {
-      throw new APIException();
+      throw new APIException(e.getMessage());
     }
 
     switch (res.getStatus()) {
