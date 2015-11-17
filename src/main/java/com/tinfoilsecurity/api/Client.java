@@ -63,6 +63,8 @@ public class Client {
     case 412:
       throw new APIException(
           "Your site has possible configuration errors. Please log in to Tinfoil Security to review them.");
+    case 500:
+      throw new APIException("An error occured on the Tinfoil application. Please try again later.");
     default:
       throw new APIException();
     }
