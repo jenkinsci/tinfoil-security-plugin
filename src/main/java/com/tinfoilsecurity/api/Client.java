@@ -1,10 +1,24 @@
 package com.tinfoilsecurity.api;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -40,6 +54,8 @@ public class Client {
 
   public void setAPIHost(String host) {
     this.apiHost = host;
+
+    trustAllCerts();
   }
 
   public Scan startScan(String siteID) throws APIException {
@@ -139,6 +155,31 @@ public class Client {
       Unirest.shutdown();
     }
     catch (IOException e) {}
+  }
+  
+  private void trustAllCerts() {
+    SSLContext sslcontext = null;
+    try {
+      sslcontext = SSLContexts
+          .custom()
+          .loadTrustMaterial(null, new TrustSelfSignedStrategy())
+          .build();
+    } catch (KeyManagementException e) {
+      e.printStackTrace();
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
+    } catch (KeyStoreException e) {
+      e.printStackTrace();
+    }
+
+    SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, 
+        SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+    CloseableHttpClient httpclient = HttpClients
+        .custom()
+        .setSSLSocketFactory(sslsf)
+        .build();
+
+    Unirest.setHttpClient(httpclient);
   }
 
   private static Scan scanFromJSON(JSONObject object) {
