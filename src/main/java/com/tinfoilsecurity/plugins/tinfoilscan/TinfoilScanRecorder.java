@@ -1,5 +1,6 @@
 package com.tinfoilsecurity.plugins.tinfoilscan;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -22,33 +23,28 @@ public class TinfoilScanRecorder extends Recorder {
   
   private String apiAccessKey;
   private String apiSecretKey;
+  private String apiHost;
   private String siteID;
 
   // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
   @DataBoundConstructor
-  public TinfoilScanRecorder(String accessKey, String secretKey, String siteID) {
-    if (accessKey.isEmpty()) {
-      this.apiAccessKey = null;
-    }
-    else {
-      this.apiAccessKey = accessKey;
-    }
-    if (secretKey.isEmpty()) {
-      this.apiSecretKey = null;
-    }
-    else {
-      this.apiSecretKey = secretKey;
-    }
-
+  public TinfoilScanRecorder(String accessKey, String secretKey, String apiHost, String siteID) {
+    this.apiAccessKey = accessKey;
+    this.apiSecretKey = secretKey;
+    this.apiHost = apiHost;
     this.siteID = siteID;
   }
   
   public String getAPIAccessKey() {
-    return apiAccessKey != null ? apiAccessKey : getDescriptor().getAPIAccessKey();
+    return apiAccessKey;
   }
   
   public String getAPISecretKey() {
-    return apiSecretKey != null ? apiSecretKey : getDescriptor().getAPISecretKey();
+    return apiSecretKey;
+  }
+  
+  public String getAPIHost() {
+    return apiHost;
   }
 
   public String getSiteID() {
@@ -62,13 +58,15 @@ public class TinfoilScanRecorder extends Recorder {
 
   @Override
   public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
-    Client tinfoilAPI = getDescriptor().buildClient(getAPIAccessKey(), getAPISecretKey());
+    Client tinfoilAPI = getDescriptor().buildClient(getAPIAccessKey(), getAPISecretKey(), getAPIHost());
 
     try {
       tinfoilAPI.startScan(siteID);
+      
+      String host = StringUtils.isNotBlank(getAPIHost()) ? getAPIHost() : getDescriptor().getAPIHost();
 
       listener.getLogger().println(
-          "Tinfoil Security scan started! Log in to " + getDescriptor().getAPIHost() + "/sites to view its progress.");
+          "Tinfoil Security scan started! Log in to " + host + "/sites to view its progress.");
     }
     catch (APIException e) {
       listener.getLogger().println("Your Tinfoil Security scan could not be started. " + e.getMessage());
@@ -108,15 +106,17 @@ public class TinfoilScanRecorder extends Recorder {
       return "Tinfoil Security";
     }
 
+    public String getDefaultAPIHost() {
+      return Client.DEFAULT_API_HOST;
+    }
+
     // This gets called when you save global settings. See global.jelly.
     @Override
     public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-      if (json.getBoolean("applianceEnabled") && !json.getString("apiHost").isEmpty()) {
-        apiHost = json.getString("apiHost");
+      apiHost = json.getString("apiHost");
+      if (StringUtils.isBlank(apiHost)) {
+        apiHost = getDefaultAPIHost();
       }
-      else {
-        apiHost = null;
-      }      
       apiAccessKey = json.getString("accessKey");
       apiSecretKey = json.getString("secretKey");
       save();
@@ -127,10 +127,6 @@ public class TinfoilScanRecorder extends Recorder {
     public String getAPIHost() {
       return apiHost;
     }
-    
-    public boolean isApplianceEnabled() {
-      return apiHost != null && !apiHost.isEmpty();
-    }
 
     public String getAPIAccessKey() {
       return apiAccessKey;
@@ -140,11 +136,23 @@ public class TinfoilScanRecorder extends Recorder {
       return apiSecretKey;
     }
 
-    public Client buildClient(String apiAccessKey, String apiSecretKey) {
+    public Client buildClient(String apiAccessKey, String apiSecretKey, String apiHost) {
+      if (StringUtils.isBlank(apiAccessKey)) {
+        apiAccessKey = getAPIAccessKey();
+      }
+      if (StringUtils.isBlank(apiSecretKey)) {
+        apiSecretKey = getAPISecretKey();
+      }
+
       Client client = new Client(apiAccessKey, apiSecretKey);
-      if (isApplianceEnabled()) {
+      
+      if (StringUtils.isBlank(apiHost)) {
+        apiHost = getAPIHost();
+      }
+      if (getDefaultAPIHost() != apiHost) {
         client.setAPIHost(apiHost);
       }
+      
       return client;
     }
   }
