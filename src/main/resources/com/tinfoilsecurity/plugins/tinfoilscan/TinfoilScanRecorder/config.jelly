@@ -9,6 +9,9 @@
   <f:entry title="API Secret Key" field="secretKey">
     <f:textbox default="${instance.getAPISecretKey()}" placeholder="${descriptor.getAPISecretKey()}"/>
   </f:entry>
+  <f:entry title="API URL" field="apiHost">
+    <f:textbox default="${instance.getAPIHost()}" placeholder="${descriptor.getAPIHost()}"/>
+  </f:entry>
   <f:entry title="Site ID" field="siteID">
     <f:textbox default="${instance.getSiteID()}"/>
   </f:entry>

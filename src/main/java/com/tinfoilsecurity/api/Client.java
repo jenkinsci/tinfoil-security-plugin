@@ -42,7 +42,9 @@ public class Client {
     }
   };
 
-  private String apiHost = "https://www.tinfoilsecurity.com";
+  public static final String DEFAULT_API_HOST = "https://www.tinfoilsecurity.com";
+  
+  private String apiHost = DEFAULT_API_HOST;
 
   private static final String ENDPOINT_START_SCAN = "/api/v1/sites/{site_id}/scans";
   private static final String ENDPOINT_GET_SCANS  = "/api/v1/sites/{site_id}/scans";

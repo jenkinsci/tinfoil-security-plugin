@@ -39,13 +39,13 @@ public class TinfoilScanRecorderTest {
 
     // We need tinfoil.getDescriptor().buildClient() to return a mock, so we need to create
     // the mock and stub out two methods.
-    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder("foo", "bar", siteID);
+    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder("foo", "bar", null, siteID);
 
     Client client = mock(Client.class);
     when(client.startScan(siteID)).thenThrow(t);
 
     TinfoilScanRecorder.DescriptorImpl descriptorSpy = spy(tinfoil.getDescriptor());
-    when(descriptorSpy.buildClient("foo", "bar")).thenReturn(client);
+    when(descriptorSpy.buildClient("foo", "bar", null)).thenReturn(client);
 
     tinfoil = spy(tinfoil);
     when(tinfoil.getDescriptor()).thenReturn(descriptorSpy);
@@ -60,13 +60,13 @@ public class TinfoilScanRecorderTest {
 
     // We need tinfoil.getDescriptor().buildClient() to return a mock, so we need to create
     // the mock and stub out two methods.
-    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder("foo", "bar", siteID);
+    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder("foo", "bar", null, siteID);
 
     Client client = mock(Client.class);
     when(client.startScan(siteID)).thenReturn(s);
 
     TinfoilScanRecorder.DescriptorImpl descriptorSpy = spy(tinfoil.getDescriptor());
-    when(descriptorSpy.buildClient("foo", "bar")).thenReturn(client);
+    when(descriptorSpy.buildClient("foo", "bar", null)).thenReturn(client);
 
     tinfoil = spy(tinfoil);
     when(tinfoil.getDescriptor()).thenReturn(descriptorSpy);
