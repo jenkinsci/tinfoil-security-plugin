@@ -73,6 +73,9 @@ public class TinfoilScanRecorder extends Recorder {
     catch (APIException e) {
       listener.getLogger().println("Your Tinfoil Security scan could not be started. " + e.getMessage());
     }
+    finally {
+    	tinfoilAPI.close();
+    }
 
     build.setResult(Result.SUCCESS);
     return true;
