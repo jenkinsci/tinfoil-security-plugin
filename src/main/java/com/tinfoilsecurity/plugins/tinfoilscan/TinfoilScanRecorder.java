@@ -1,5 +1,7 @@
 package com.tinfoilsecurity.plugins.tinfoilscan;
 
+import java.io.IOException;
+
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
@@ -7,6 +9,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import com.tinfoilsecurity.api.Client;
 import com.tinfoilsecurity.api.Client.APIException;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -20,7 +23,7 @@ import hudson.tasks.Recorder;
 import net.sf.json.JSONObject;
 
 public class TinfoilScanRecorder extends Recorder {
-  
+
   private String apiAccessKey;
   private String apiSecretKey;
   private String apiHost;
@@ -34,15 +37,15 @@ public class TinfoilScanRecorder extends Recorder {
     this.apiHost = apiHost;
     this.siteID = siteID;
   }
-  
+
   public String getAPIAccessKey() {
     return apiAccessKey;
   }
-  
+
   public String getAPISecretKey() {
     return apiSecretKey;
   }
-  
+
   public String getAPIHost() {
     return apiHost;
   }
@@ -51,31 +54,42 @@ public class TinfoilScanRecorder extends Recorder {
     return siteID;
   }
 
-  @Override
   public BuildStepMonitor getRequiredMonitorService() {
     return BuildStepMonitor.STEP;
   }
 
   @Override
   public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
-    Client tinfoilAPI = getDescriptor().buildClient(getAPIAccessKey(), getAPISecretKey(), getAPIHost());
-
     try {
-      tinfoilAPI.startScan(siteID);
-      
-      String host = StringUtils.isNotBlank(getAPIHost()) ? getAPIHost() : getDescriptor().getAPIHost();
+      EnvVars environment = build.getEnvironment(listener);
+      apiAccessKey = environment.expand(getAPIAccessKey());
+      apiSecretKey = environment.expand(getAPISecretKey());
 
-      listener.getLogger().println(
-          "Tinfoil Security scan started! Log in to " + host + "/sites to view its progress.");
+      Client tinfoilAPI = getDescriptor().buildClient(environment, apiAccessKey, apiSecretKey, getAPIHost());
+
+      try {
+        tinfoilAPI.startScan(siteID);
+
+        String host = StringUtils.isNotBlank(getAPIHost()) ? getAPIHost() : getDescriptor().getAPIHost();
+
+        listener.getLogger().println(
+            "Tinfoil Security scan started! Log in to " + host + "/sites to view its progress.");
+      }
+      catch (APIException e) {
+        listener.getLogger().println("Your Tinfoil Security scan could not be started. " + e.getMessage());
+      }
+      finally {
+        tinfoilAPI.close();
+      }
+
+      build.setResult(Result.SUCCESS);
     }
-    catch (APIException e) {
+    catch (InterruptedException e) {
       listener.getLogger().println("Your Tinfoil Security scan could not be started. " + e.getMessage());
     }
-    finally {
-    	tinfoilAPI.close();
+    catch (IOException e) {
+      listener.getLogger().println("Your Tinfoil Security scan could not be started. " + e.getMessage());
     }
-
-    build.setResult(Result.SUCCESS);
     return true;
   }
 
@@ -126,7 +140,7 @@ public class TinfoilScanRecorder extends Recorder {
 
       return super.configure(req, json);
     }
-    
+
     public String getAPIHost() {
       return apiHost;
     }
@@ -139,23 +153,35 @@ public class TinfoilScanRecorder extends Recorder {
       return apiSecretKey;
     }
 
-    public Client buildClient(String apiAccessKey, String apiSecretKey, String apiHost) {
+    public Client buildClient(EnvVars environment, String apiAccessKey, String apiSecretKey, String apiHost)
+        throws IOException, InterruptedException {
+
       if (StringUtils.isBlank(apiAccessKey)) {
-        apiAccessKey = getAPIAccessKey();
+        if (environment == null) {
+          apiAccessKey = getAPIAccessKey();
+        }
+        else {
+          environment.expand(getAPIAccessKey());
+        }
       }
       if (StringUtils.isBlank(apiSecretKey)) {
-        apiSecretKey = getAPISecretKey();
+        if (environment == null) {
+          apiSecretKey = getAPISecretKey();
+        }
+        else {
+          environment.expand(getAPISecretKey());
+        }
       }
 
       Client client = new Client(apiAccessKey, apiSecretKey);
-      
+
       if (StringUtils.isBlank(apiHost)) {
         apiHost = getAPIHost();
       }
       if (getDefaultAPIHost() != apiHost) {
         client.setAPIHost(apiHost);
       }
-      
+
       return client;
     }
   }
