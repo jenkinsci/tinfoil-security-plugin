@@ -12,6 +12,7 @@ import com.tinfoilsecurity.api.Client;
 import com.tinfoilsecurity.api.Client.APIException;
 import com.tinfoilsecurity.api.Scan;
 
+import hudson.EnvVars;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 
@@ -45,7 +46,7 @@ public class TinfoilScanRecorderTest {
     when(client.startScan(siteID)).thenThrow(t);
 
     TinfoilScanRecorder.DescriptorImpl descriptorSpy = spy(tinfoil.getDescriptor());
-    when(descriptorSpy.buildClient("foo", "bar", null)).thenReturn(client);
+    when(descriptorSpy.buildClient(any(EnvVars.class), eq("foo"), eq("bar"), isNull(String.class))).thenReturn(client);
 
     tinfoil = spy(tinfoil);
     when(tinfoil.getDescriptor()).thenReturn(descriptorSpy);
@@ -66,7 +67,7 @@ public class TinfoilScanRecorderTest {
     when(client.startScan(siteID)).thenReturn(s);
 
     TinfoilScanRecorder.DescriptorImpl descriptorSpy = spy(tinfoil.getDescriptor());
-    when(descriptorSpy.buildClient("foo", "bar", null)).thenReturn(client);
+    when(descriptorSpy.buildClient(any(EnvVars.class), eq("foo"), eq("bar"), isNull(String.class))).thenReturn(client);
 
     tinfoil = spy(tinfoil);
     when(tinfoil.getDescriptor()).thenReturn(descriptorSpy);
