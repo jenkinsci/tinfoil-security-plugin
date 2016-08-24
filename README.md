@@ -35,6 +35,12 @@ This will run Jenkins with your Tinfoil plugin as an available plugin. Now you c
 
 ```$ mvn hpi:run -Djetty.port=8090```
 
+## Building & Releasing
+
+Notes can be found on the [Jenkins Wiki](https://wiki.jenkins-ci.org/display/JENKINS/Hosting+Plugins#HostingPlugins-Releasingtojenkinsci.org)
+
+1. `$ mvn release:prepare release:perform`
+
 ## Adding a library
 
 Dependency management is handled by Maven. The file that stores dependencies is `pom.xml`. Never write to this file directly. Use Eclipse's editor instead.
