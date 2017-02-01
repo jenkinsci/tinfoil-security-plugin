@@ -27,6 +27,8 @@ Make sure you have your M2_REPO classpath variable set properly. Mine wasn't set
 
 Eclipse will prompt you to rebuild the project. Make sure that this returns no build errors. Warnings are OK.
 
+If, after performing these steps, there are compilation errors in the test package, right click on the project in the workspace and click "Refresh".
+
 ## Testing
 
 ```$ mvn hpi:run```
