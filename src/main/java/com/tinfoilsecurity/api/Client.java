@@ -10,13 +10,9 @@ import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
@@ -42,13 +38,11 @@ public class Client {
     }
   };
 
-  public static final String DEFAULT_API_HOST = "https://www.tinfoilsecurity.com";
-  
-  private String apiHost = DEFAULT_API_HOST;
-
+  public static final String  DEFAULT_API_HOST    = "https://www.tinfoilsecurity.com";
   private static final String ENDPOINT_START_SCAN = "/api/v1/sites/{site_id}/scans";
   private static final String ENDPOINT_GET_SCANS  = "/api/v1/sites/{site_id}/scans";
   private static final String ENDPOINT_GET_REPORT = "/api/v1/sites/{site_id}/scans/{scan_id}/report";
+  private String              apiHost             = DEFAULT_API_HOST;
 
   public Client(String accessKey, String secretKey) {
     Unirest.setDefaultHeader("Authorization", "Token token=" + secretKey + ", access_key=" + accessKey);
@@ -158,28 +152,25 @@ public class Client {
     }
     catch (IOException e) {}
   }
-  
+
   private void trustAllCerts() {
     SSLContext sslcontext = null;
     try {
-      sslcontext = SSLContexts
-          .custom()
-          .loadTrustMaterial(null, new TrustSelfSignedStrategy())
-          .build();
-    } catch (KeyManagementException e) {
+      sslcontext = SSLContexts.custom().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build();
+    }
+    catch (KeyManagementException e) {
       e.printStackTrace();
-    } catch (NoSuchAlgorithmException e) {
+    }
+    catch (NoSuchAlgorithmException e) {
       e.printStackTrace();
-    } catch (KeyStoreException e) {
+    }
+    catch (KeyStoreException e) {
       e.printStackTrace();
     }
 
-    SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, 
+    SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext,
         SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-    CloseableHttpClient httpclient = HttpClients
-        .custom()
-        .setSSLSocketFactory(sslsf)
-        .build();
+    CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
 
     Unirest.setHttpClient(httpclient);
   }
