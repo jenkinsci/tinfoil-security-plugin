@@ -72,8 +72,8 @@ public class TinfoilScanRecorder extends Recorder {
 
         String host = StringUtils.isNotBlank(getAPIHost()) ? getAPIHost() : getDescriptor().getAPIHost();
 
-        listener.getLogger().println(
-            "Tinfoil Security scan started! Log in to " + host + "/sites to view its progress.");
+        listener.getLogger()
+            .println("Tinfoil Security scan started! Log in to " + host + "/sites to view its progress.");
       }
       catch (APIException e) {
         listener.getLogger().println("Your Tinfoil Security scan could not be started. " + e.getMessage());
