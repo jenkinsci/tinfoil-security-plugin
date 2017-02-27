@@ -15,4 +15,11 @@
   <f:entry title="Site ID" field="siteID">
     <f:textbox default="${instance.getSiteID()}"/>
   </f:entry>
+
+  <f:entry title="Proxy Host" field="proxyHost">
+    <f:textbox default="${instance.getProxyHost()}" placeholder="${descriptor.getProxyHost()}"/>
+  </f:entry>
+  <f:entry title="Proxy Port" field="proxyPort">
+    <f:textbox default="${instance.getProxyPort()}" placeholder="${descriptor.getProxyPort()}"/>
+  </f:entry>
 </j:jelly>

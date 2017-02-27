@@ -10,5 +10,12 @@
     <f:entry title="API URL" field="apiHost">
       <f:textbox default="${descriptor.getAPIHost()}" placeholder="${descriptor.getDefaultAPIHost()}"/>
     </f:entry>
+
+    <f:entry title="Proxy Host" field="proxyHost">
+      <f:textbox default="${descriptor.getProxyHost()}" placeholder="${descriptor.getProxyHost()}"/>
+    </f:entry>
+    <f:entry title="Proxy Port" field="proxyPort">
+      <f:textbox default="${descriptor.getProxyPort()}" placeholder="${descriptor.getProxyPort()}"/>
+    </f:entry>
   </f:section>
 </j:jelly>
