@@ -1,12 +1,18 @@
 package com.tinfoilsecurity.plugins.tinfoilscan;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
 
 import com.tinfoilsecurity.api.Client;
 import com.tinfoilsecurity.api.Client.APIException;
@@ -40,13 +46,14 @@ public class TinfoilScanRecorderTest {
 
     // We need tinfoil.getDescriptor().buildClient() to return a mock, so we need to create
     // the mock and stub out two methods.
-    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder("foo", "bar", null, siteID);
+    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder("foo", "bar", null, siteID, null, null);
 
     Client client = mock(Client.class);
     when(client.startScan(siteID)).thenThrow(t);
 
     TinfoilScanRecorder.DescriptorImpl descriptorSpy = spy(tinfoil.getDescriptor());
-    when(descriptorSpy.buildClient(any(EnvVars.class), eq("foo"), eq("bar"), isNull(String.class))).thenReturn(client);
+    when(descriptorSpy.buildClient(any(EnvVars.class), eq("foo"), eq("bar"), isNull(String.class), isNull(String.class),
+        isNull(Integer.class))).thenReturn(client);
 
     tinfoil = spy(tinfoil);
     when(tinfoil.getDescriptor()).thenReturn(descriptorSpy);
@@ -61,13 +68,14 @@ public class TinfoilScanRecorderTest {
 
     // We need tinfoil.getDescriptor().buildClient() to return a mock, so we need to create
     // the mock and stub out two methods.
-    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder("foo", "bar", null, siteID);
+    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder("foo", "bar", null, siteID, null, null);
 
     Client client = mock(Client.class);
     when(client.startScan(siteID)).thenReturn(s);
 
     TinfoilScanRecorder.DescriptorImpl descriptorSpy = spy(tinfoil.getDescriptor());
-    when(descriptorSpy.buildClient(any(EnvVars.class), eq("foo"), eq("bar"), isNull(String.class))).thenReturn(client);
+    when(descriptorSpy.buildClient(any(EnvVars.class), eq("foo"), eq("bar"), isNull(String.class), isNull(String.class),
+        isNull(Integer.class))).thenReturn(client);
 
     tinfoil = spy(tinfoil);
     when(tinfoil.getDescriptor()).thenReturn(descriptorSpy);

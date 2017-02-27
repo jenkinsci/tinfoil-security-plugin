@@ -10,10 +10,12 @@ import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
+import org.apache.http.HttpHost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,8 +45,11 @@ public class Client {
   private static final String ENDPOINT_GET_SCANS  = "/api/v1/sites/{site_id}/scans";
   private static final String ENDPOINT_GET_REPORT = "/api/v1/sites/{site_id}/scans/{scan_id}/report";
   private String              apiHost             = DEFAULT_API_HOST;
+  private HttpClientBuilder   httpClientBuilder;
 
   public Client(String accessKey, String secretKey) {
+    this.httpClientBuilder = HttpClients.custom().useSystemProperties();
+
     Unirest.setDefaultHeader("Authorization", "Token token=" + secretKey + ", access_key=" + accessKey);
   }
 
@@ -52,6 +57,12 @@ public class Client {
     this.apiHost = host;
 
     trustAllCerts();
+  }
+
+  public void setProxyConfig(String proxyHost, Integer proxyPort) {
+    HttpHost httpHost = new HttpHost(proxyHost, proxyPort);
+    CloseableHttpClient client = this.httpClientBuilder.setProxy(httpHost).build();
+    Unirest.setHttpClient(client);
   }
 
   public Scan startScan(String siteID) throws APIException {
@@ -170,7 +181,7 @@ public class Client {
 
     SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext,
         SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-    CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+    CloseableHttpClient httpclient = this.httpClientBuilder.setSSLSocketFactory(sslsf).build();
 
     Unirest.setHttpClient(httpclient);
   }
