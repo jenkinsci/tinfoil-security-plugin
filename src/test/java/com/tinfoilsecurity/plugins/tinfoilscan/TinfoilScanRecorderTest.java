@@ -14,6 +14,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import com.cloudbees.plugins.credentials.CredentialsScope;
+import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
+import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.tinfoilsecurity.api.Client;
 import com.tinfoilsecurity.api.Client.APIException;
 import com.tinfoilsecurity.api.Scan;
@@ -21,6 +24,8 @@ import com.tinfoilsecurity.api.Scan;
 import hudson.EnvVars;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
+import hudson.model.Item;
+import hudson.security.ACL;
 
 public class TinfoilScanRecorderTest {
   @Rule
@@ -44,9 +49,13 @@ public class TinfoilScanRecorderTest {
     FreeStyleProject p = j.createFreeStyleProject();
     String siteID = "test-site";
 
-    // We need tinfoil.getDescriptor().buildClient() to return a mock, so we need to create
+    StandardUsernamePasswordCredentials credentials = new UsernamePasswordCredentialsImpl(CredentialsScope.SYSTEM, null,
+        "", "foo", "bar");
+
+    // We need tinfoil.getDescriptor().buildClient() to return a mock, so we need to
+    // create
     // the mock and stub out two methods.
-    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder("foo", "bar", null, siteID, null, null);
+    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder(credentials.getId(), null, siteID, null, null);
 
     Client client = mock(Client.class);
     when(client.startScan(siteID)).thenThrow(t);
@@ -56,6 +65,7 @@ public class TinfoilScanRecorderTest {
         isNull(Integer.class))).thenReturn(client);
 
     tinfoil = spy(tinfoil);
+    when(tinfoil.resolveCredential(any(Item.class), eq(credentials.getId()))).thenReturn(credentials);
     when(tinfoil.getDescriptor()).thenReturn(descriptorSpy);
     p.getPublishersList().add(tinfoil);
     return p.scheduleBuild2(0).get();
@@ -66,9 +76,13 @@ public class TinfoilScanRecorderTest {
     FreeStyleProject p = j.createFreeStyleProject();
     String siteID = "test-site";
 
-    // We need tinfoil.getDescriptor().buildClient() to return a mock, so we need to create
+    StandardUsernamePasswordCredentials credentials = new UsernamePasswordCredentialsImpl(CredentialsScope.SYSTEM, null,
+        "", "foo", "bar");
+
+    // We need tinfoil.getDescriptor().buildClient() to return a mock, so we need to
+    // create
     // the mock and stub out two methods.
-    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder("foo", "bar", null, siteID, null, null);
+    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder(credentials.getId(), null, siteID, null, null);
 
     Client client = mock(Client.class);
     when(client.startScan(siteID)).thenReturn(s);
@@ -78,6 +92,7 @@ public class TinfoilScanRecorderTest {
         isNull(Integer.class))).thenReturn(client);
 
     tinfoil = spy(tinfoil);
+    when(tinfoil.resolveCredential(any(Item.class), eq(credentials.getId()))).thenReturn(credentials);
     when(tinfoil.getDescriptor()).thenReturn(descriptorSpy);
     p.getPublishersList().add(tinfoil);
     return p.scheduleBuild2(0).get();

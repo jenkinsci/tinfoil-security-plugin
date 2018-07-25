@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>tinfoil-scan</name>
   <comment>This plugin allows you to run web security tests from the cloud using Tinfoil Security. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
