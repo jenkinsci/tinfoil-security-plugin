@@ -1,4 +1,4 @@
-package com.tinfoilsecurity.api;
+package com.tinfoilsecurity.webappscanner.api;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -24,7 +24,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.tinfoilsecurity.api.Report.Classification;
+import com.tinfoilsecurity.webappscanner.api.Report.Classification;
 
 public class Client {
   public static class APIException extends Exception {

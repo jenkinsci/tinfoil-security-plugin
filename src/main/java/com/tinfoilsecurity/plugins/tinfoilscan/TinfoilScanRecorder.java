@@ -18,8 +18,8 @@ import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
-import com.tinfoilsecurity.api.Client;
-import com.tinfoilsecurity.api.Client.APIException;
+import com.tinfoilsecurity.webappscanner.api.Client;
+import com.tinfoilsecurity.webappscanner.api.Client.APIException;
 
 import hudson.EnvVars;
 import hudson.Extension;

@@ -17,9 +17,9 @@ import org.jvnet.hudson.test.JenkinsRule;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
-import com.tinfoilsecurity.api.Client;
-import com.tinfoilsecurity.api.Client.APIException;
-import com.tinfoilsecurity.api.Scan;
+import com.tinfoilsecurity.webappscanner.api.Client;
+import com.tinfoilsecurity.webappscanner.api.Client.APIException;
+import com.tinfoilsecurity.webappscanner.api.Scan;
 
 import hudson.EnvVars;
 import hudson.model.FreeStyleBuild;
