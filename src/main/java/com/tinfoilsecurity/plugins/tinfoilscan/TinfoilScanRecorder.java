@@ -137,10 +137,9 @@ public class TinfoilScanRecorder extends Recorder {
     }
 
     if (context == null) {
-      return CredentialsMatchers.firstOrNull(
-          CredentialsProvider.lookupCredentials(StandardUsernamePasswordCredentials.class, Jenkins.getActiveInstance(),
-              ACL.SYSTEM, Collections.<DomainRequirement>emptyList()),
-          CredentialsMatchers.withId(credentialId));
+      return CredentialsMatchers
+          .firstOrNull(CredentialsProvider.lookupCredentials(StandardUsernamePasswordCredentials.class, Jenkins.get(),
+              ACL.SYSTEM, Collections.<DomainRequirement>emptyList()), CredentialsMatchers.withId(credentialId));
     } else {
       return CredentialsMatchers
           .firstOrNull(CredentialsProvider.lookupCredentials(StandardUsernamePasswordCredentials.class, context,
@@ -271,10 +270,10 @@ public class TinfoilScanRecorder extends Recorder {
       result = result.includeCurrentValue(credentialId);
 
       if (item == null) {
-        if (!Jenkins.getActiveInstance().hasPermission(Jenkins.ADMINISTER)) {
+        if (!Jenkins.get().hasPermission(Jenkins.ADMINISTER)) {
           return result;
         } else {
-          result = result.includeAs(ACL.SYSTEM, Jenkins.getActiveInstance(), StandardUsernamePasswordCredentials.class);
+          result = result.includeAs(ACL.SYSTEM, Jenkins.get(), StandardUsernamePasswordCredentials.class);
         }
       } else {
         if (!item.hasPermission(Item.EXTENDED_READ) && !item.hasPermission(CredentialsProvider.USE_ITEM)) {

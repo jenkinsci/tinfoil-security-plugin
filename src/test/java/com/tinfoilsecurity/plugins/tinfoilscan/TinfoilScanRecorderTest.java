@@ -25,7 +25,6 @@ import hudson.EnvVars;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Item;
-import hudson.security.ACL;
 
 public class TinfoilScanRecorderTest {
   @Rule

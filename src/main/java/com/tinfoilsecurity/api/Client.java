@@ -29,6 +29,7 @@ import com.tinfoilsecurity.api.Report.Classification;
 public class Client {
   public static class APIException extends Exception {
 
+    private static final long serialVersionUID = 1L;
     private static final String DEFAULT_MESSAGE = "An unexpected error has occured. Perhaps the Tinfoil API is down.";
 
     public APIException() {
@@ -40,12 +41,12 @@ public class Client {
     }
   };
 
-  public static final String  DEFAULT_API_HOST    = "https://www.tinfoilsecurity.com";
+  public static final String DEFAULT_API_HOST = "https://www.tinfoilsecurity.com";
   private static final String ENDPOINT_START_SCAN = "/api/v1/sites/{site_id}/scans";
-  private static final String ENDPOINT_GET_SCANS  = "/api/v1/sites/{site_id}/scans";
+  private static final String ENDPOINT_GET_SCANS = "/api/v1/sites/{site_id}/scans";
   private static final String ENDPOINT_GET_REPORT = "/api/v1/sites/{site_id}/scans/{scan_id}/report";
-  private String              apiHost             = DEFAULT_API_HOST;
-  private HttpClientBuilder   httpClientBuilder;
+  private String apiHost = DEFAULT_API_HOST;
+  private HttpClientBuilder httpClientBuilder;
 
   public Client(String accessKey, String secretKey) {
     this.httpClientBuilder = HttpClients.custom().useSystemProperties();
@@ -69,8 +70,7 @@ public class Client {
     HttpResponse<JsonNode> res = null;
     try {
       res = Unirest.post(apiHost + ENDPOINT_START_SCAN).routeParam("site_id", siteID).asJson();
-    }
-    catch (UnirestException e) {
+    } catch (UnirestException e) {
       throw new APIException(e.getMessage());
     }
 
@@ -95,6 +95,8 @@ public class Client {
 
   public boolean isScanRunning(String siteID, String scanID) throws APIException {
     Map<String, Object> params = Collections.unmodifiableMap(new HashMap<String, Object>() {
+      private static final long serialVersionUID = 1L;
+
       {
         put("page", 1);
         put("per_page", 1);
@@ -106,8 +108,7 @@ public class Client {
 
     try {
       res = Unirest.get(apiHost + ENDPOINT_GET_SCANS).routeParam("site_id", siteID).queryString(params).asJson();
-    }
-    catch (UnirestException e) {
+    } catch (UnirestException e) {
       throw new APIException();
     }
 
@@ -116,8 +117,7 @@ public class Client {
       JSONArray scans = res.getBody().getObject().getJSONArray("scans");
       if (scans.length() > 0) {
         return scanID.equals(scans.getJSONObject(0).getString("id"));
-      }
-      else {
+      } else {
         return false;
       }
     case 404:
@@ -130,6 +130,8 @@ public class Client {
 
   public Report getReport(String siteID, String scanID) throws APIException {
     Map<String, Object> params = Collections.unmodifiableMap(new HashMap<String, Object>() {
+      private static final long serialVersionUID = 1L;
+
       {
         put("page", 1);
         put("per_page", 1);
@@ -141,8 +143,7 @@ public class Client {
     try {
       res = Unirest.get(apiHost + ENDPOINT_GET_REPORT).routeParam("site_id", siteID).routeParam("scan_id", scanID)
           .queryString(params).asJson();
-    }
-    catch (UnirestException e) {
+    } catch (UnirestException e) {
       throw new APIException();
     }
 
@@ -160,22 +161,19 @@ public class Client {
     Unirest.clearDefaultHeaders();
     try {
       Unirest.shutdown();
+    } catch (IOException e) {
     }
-    catch (IOException e) {}
   }
 
   private void trustAllCerts() {
     SSLContext sslcontext = null;
     try {
       sslcontext = SSLContexts.custom().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build();
-    }
-    catch (KeyManagementException e) {
+    } catch (KeyManagementException e) {
       e.printStackTrace();
-    }
-    catch (NoSuchAlgorithmException e) {
+    } catch (NoSuchAlgorithmException e) {
       e.printStackTrace();
-    }
-    catch (KeyStoreException e) {
+    } catch (KeyStoreException e) {
       e.printStackTrace();
     }
 
