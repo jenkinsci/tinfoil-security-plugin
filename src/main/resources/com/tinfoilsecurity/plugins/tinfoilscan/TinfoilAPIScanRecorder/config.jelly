@@ -3,8 +3,8 @@
   <!--
     This jelly script is used for per-project configuration.
   -->
-  <f:entry title="Site ID" field="siteId">
-    <f:textbox value="${instance.getSiteId()}"/>
+  <f:entry title="API ID" field="apiId">
+    <f:textbox default="${instance.getAPIId()}"/>
   </f:entry>
 
   <f:advanced>
@@ -12,7 +12,7 @@
       <f:entry title="${%Credentials}" field="credentialId">
         <c:select/>
       </f:entry>
-      <f:entry title="Scanner URL" field="apiHost">
+      <f:entry title="API Scanner URL" field="apiHost">
         <f:textbox value="${instance.getAPIHost()}" placeholder="${descriptor.getAPIHost()}"/>
       </f:entry>
       <f:entry title="Proxy Host" field="proxyHost">

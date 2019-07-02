@@ -18,8 +18,8 @@ import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
-import com.tinfoilsecurity.webappscanner.api.Client;
-import com.tinfoilsecurity.webappscanner.api.Client.APIException;
+import com.tinfoilsecurity.apiscanner.api.Client;
+import com.tinfoilsecurity.apiscanner.api.Client.APIException;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -41,21 +41,22 @@ import jenkins.model.Jenkins;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
-public class TinfoilScanRecorder extends Recorder {
+public class TinfoilAPIScanRecorder extends Recorder {
 
   private String credentialId;
   private String apiHost;
-  private String siteId;
+  private String apiId;
   private String proxyHost;
   private Integer proxyPort;
 
   // Fields in config.jelly must match the parameter names in the
   // "DataBoundConstructor"
   @DataBoundConstructor
-  public TinfoilScanRecorder(String credentialId, String apiHost, String siteId, String proxyHost, Integer proxyPort) {
+  public TinfoilAPIScanRecorder(String credentialId, String apiHost, String apiId, String proxyHost,
+      Integer proxyPort) {
     this.credentialId = credentialId;
     this.apiHost = apiHost;
-    this.siteId = siteId;
+    this.apiId = apiId;
     this.proxyHost = proxyHost;
     this.proxyPort = proxyPort;
   }
@@ -68,8 +69,8 @@ public class TinfoilScanRecorder extends Recorder {
     return apiHost;
   }
 
-  public String getSiteId() {
-    return siteId;
+  public String getAPIId() {
+    return apiId;
   }
 
   public String getProxyHost() {
@@ -110,23 +111,22 @@ public class TinfoilScanRecorder extends Recorder {
           getProxyHost(), getProxyPort());
 
       try {
-        tinfoilAPI.startScan(siteId);
+        tinfoilAPI.startScan(apiId);
 
         String host = StringUtils.isNotBlank(getAPIHost()) ? getAPIHost() : getDescriptor().getAPIHost();
 
-        listener.getLogger()
-            .println("Tinfoil Security scan started! Log in to " + host + "/sites to view its progress.");
+        listener.getLogger().println("Tinfoil Security API scan started! Log in to " + host + " to view its progress.");
       } catch (APIException e) {
-        listener.getLogger().println("Your Tinfoil Security scan could not be started. " + e.getMessage());
+        listener.getLogger().println("Your Tinfoil Security API scan could not be started. " + e.getMessage());
       } finally {
         tinfoilAPI.close();
       }
 
       build.setResult(Result.SUCCESS);
     } catch (InterruptedException e) {
-      listener.getLogger().println("Your Tinfoil Security scan could not be started. " + e.getMessage());
+      listener.getLogger().println("Your Tinfoil Security API scan could not be started. " + e.getMessage());
     } catch (IOException e) {
-      listener.getLogger().println("Your Tinfoil Security scan could not be started. " + e.getMessage());
+      listener.getLogger().println("Your Tinfoil Security API scan could not be started. " + e.getMessage());
     }
     return true;
   }
@@ -175,7 +175,7 @@ public class TinfoilScanRecorder extends Recorder {
 
     @Override
     public String getDisplayName() {
-      return "Tinfoil Security WebApp Scanner";
+      return "Tinfoil Security API Scanner";
     }
 
     public String getDefaultAPIHost() {
@@ -227,9 +227,9 @@ public class TinfoilScanRecorder extends Recorder {
       return proxyPort;
     }
 
-    public FormValidation doCheckSiteId(@QueryParameter String value) throws IOException, ServletException {
+    public FormValidation doCheckApiId(@QueryParameter String value) throws IOException, ServletException {
       if (StringUtils.isBlank(value)) {
-        return FormValidation.error("Site ID is required");
+        return FormValidation.error("API ID is required");
       }
       return FormValidation.ok();
     }
