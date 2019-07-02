@@ -2,3 +2,4 @@ target/*
 work/*
 .classpath
 /bin/
+.vscode/settings.json
