@@ -17,23 +17,23 @@ import org.jvnet.hudson.test.JenkinsRule;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
-import com.tinfoilsecurity.webappscanner.api.Client;
-import com.tinfoilsecurity.webappscanner.api.Client.APIException;
-import com.tinfoilsecurity.webappscanner.api.Scan;
+import com.tinfoilsecurity.apiscanner.api.Client;
+import com.tinfoilsecurity.apiscanner.api.Client.APIException;
+import com.tinfoilsecurity.apiscanner.api.Scan;
 
 import hudson.EnvVars;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Item;
 
-public class TinfoilScanRecorderTest {
+public class TinfoilAPIScanRecorderTest {
   @Rule
   public JenkinsRule j = new JenkinsRule();
 
   @Test
   public void shouldReportSuccessOnSuccessfulScan() throws Exception {
-    FreeStyleBuild b = buildWhereTinfoilReturns(new Scan("test-site"));
-    j.assertLogContains("Tinfoil Security scan started!", b);
+    FreeStyleBuild b = buildWhereTinfoilReturns(new Scan(12, true));
+    j.assertLogContains("Tinfoil Security API scan started!", b);
   }
 
   @Test
@@ -54,12 +54,12 @@ public class TinfoilScanRecorderTest {
     // We need tinfoil.getDescriptor().buildClient() to return a mock, so we need to
     // create
     // the mock and stub out two methods.
-    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder(credentials.getId(), null, siteID, null, null);
+    TinfoilAPIScanRecorder tinfoil = new TinfoilAPIScanRecorder(credentials.getId(), null, siteID, null, null);
 
     Client client = mock(Client.class);
     when(client.startScan(siteID)).thenThrow(t);
 
-    TinfoilScanRecorder.DescriptorImpl descriptorSpy = spy(tinfoil.getDescriptor());
+    TinfoilAPIScanRecorder.DescriptorImpl descriptorSpy = spy(tinfoil.getDescriptor());
     when(descriptorSpy.buildClient(any(EnvVars.class), eq("foo"), eq("bar"), isNull(String.class), isNull(String.class),
         isNull(Integer.class))).thenReturn(client);
 
@@ -81,12 +81,12 @@ public class TinfoilScanRecorderTest {
     // We need tinfoil.getDescriptor().buildClient() to return a mock, so we need to
     // create
     // the mock and stub out two methods.
-    TinfoilScanRecorder tinfoil = new TinfoilScanRecorder(credentials.getId(), null, siteID, null, null);
+    TinfoilAPIScanRecorder tinfoil = new TinfoilAPIScanRecorder(credentials.getId(), null, siteID, null, null);
 
     Client client = mock(Client.class);
     when(client.startScan(siteID)).thenReturn(s);
 
-    TinfoilScanRecorder.DescriptorImpl descriptorSpy = spy(tinfoil.getDescriptor());
+    TinfoilAPIScanRecorder.DescriptorImpl descriptorSpy = spy(tinfoil.getDescriptor());
     when(descriptorSpy.buildClient(any(EnvVars.class), eq("foo"), eq("bar"), isNull(String.class), isNull(String.class),
         isNull(Integer.class))).thenReturn(client);
 

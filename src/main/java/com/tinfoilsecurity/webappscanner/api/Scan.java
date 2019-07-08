@@ -1,4 +1,4 @@
-package com.tinfoilsecurity.api;
+package com.tinfoilsecurity.webappscanner.api;
 
 public class Scan {
   private String id;

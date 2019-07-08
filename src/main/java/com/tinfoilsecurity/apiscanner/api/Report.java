@@ -1,4 +1,4 @@
-package com.tinfoilsecurity.api;
+package com.tinfoilsecurity.apiscanner.api;
 
 public class Report {
   public enum Classification {
